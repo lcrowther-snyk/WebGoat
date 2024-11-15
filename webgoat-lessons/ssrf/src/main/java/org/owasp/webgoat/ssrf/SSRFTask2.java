@@ -22,6 +22,8 @@
 
 package org.owasp.webgoat.ssrf;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.owasp.webgoat.assignments.AssignmentEndpoint;
 import org.owasp.webgoat.assignments.AssignmentHints;
 import org.owasp.webgoat.assignments.AttackResult;
@@ -50,7 +52,7 @@ public class SSRFTask2 extends AssignmentEndpoint {
     protected AttackResult furBall(String url) {
         if (url.matches("http://ifconfig.pro")) {
             String html;
-            try (InputStream in = new URL(url).openStream()) {
+            try (InputStream in = Urls.create(url, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openStream()) {
                 html = new String(in.readAllBytes(), StandardCharsets.UTF_8)
                         .replaceAll("\n","<br>"); // Otherwise the \n gets escaped in the response
             } catch (MalformedURLException e) {
